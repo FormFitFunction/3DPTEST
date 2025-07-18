@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Parts Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background-color: #003366;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .search-bar {
+            background-color: white;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .filter-select {
+            padding: 0.5rem;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            min-width: 150px;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .category-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .category-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #003366;
+        }
+
+        .category-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-count {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .parts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .part-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .part-card:hover {
+            transform: translateY(-1px);
+        }
+
+        .part-image {
+            width: 100%;
+            height: 200px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .part-info {
+            margin-bottom: 1rem;
+        }
+
+        .part-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .part-specs {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .download-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .btn-stl {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-stl:hover {
+            background-color: #218838;
+        }
+
+        .btn-step {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-step:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-step.premium {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .btn-step.premium:hover {
+            background-color: #e0a800;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: #666;
+        }
+
+        .breadcrumb a {
+            color: #003366;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>3D Parts Library</h1>
+        <p>Standardized, high-quality 3D printable parts</p>
+    </header>
+
+    <div class="search-bar">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search parts..." id="searchInput">
+            <select class="filter-select" id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="bolts">Bolts</option>
+                <option value="nuts">Nuts</option>
+                <option value="washers">Washers</option>
+                <option value="cable-organizers">Cable Organizers</option>
+            </select>
+            <select class="filter-select" id="sizeFilter">
+                <option value="">All Sizes</option>
+                <option value="M3">M3</option>
+                <option value="M4">M4</option>
+                <option value="M5">M5</option>
+                <option value="M6">M6</option>
+                <option value="M8">M8</option>
+            </select>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <div class="breadcrumb" id="breadcrumb">
+            <a href="#" onclick="showHome()">Home</a>
+        </div>
+
+        <div id="homeView">
+            <div class="categories">
+                <div class="category-card" onclick="showCategory('bolts')">
+                    <div class="category-icon">🔩</div>
+                    <div class="category-title">Bolts</div>
+                    <div class="category-count">12 parts</div>
+                </div>
+                <div class="category-card" onclick="showCategory('nuts')">
+                    <div class="category-icon">🔸</div>
+                    <div class="category-title">Nuts</div>
+                    <div class="category-count">8 parts</div>
+                </div>
+                <div class="category-card" onclick="showCategory('washers')">
+                    <div class="category-icon">⭕</div>
+                    <div class="category-title">Washers</div>
+                    <div class="category-count">6 parts</div>
+                </div>
+                <div class="category-card" onclick="showCategory('cable-organizers')">
+                    <div class="category-icon">🔌</div>
+                    <div class="category-title">Cable Organizers</div>
+                    <div class="category-count">4 parts</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="categoryView" class="hidden">
+            <div class="parts-grid" id="partsGrid">
+                <!-- Parts will be populated by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sample data - replace with your actual parts
+        const partsData = {
+            bolts: [
+                {
+                    id: 'bolt-m3-10',
+                    title: 'M3 × 10mm Socket Head Cap Screw',
+                    specs: 'Thread: M3 × 0.5mm\nLength: 10mm\nHead: 5.5mm hex\nMaterial: PLA/PETG compatible',
+                    size: 'M3',
+                    stlFile: 'files/stl/bolt-m3-10.stl',
+                    stepFile: 'files/step/bolt-m3-10.step'
+                },
+                {
+                    id: 'bolt-m4-12',
+                    title: 'M4 × 12mm Socket Head Cap Screw',
+                    specs: 'Thread: M4 × 0.7mm\nLength: 12mm\nHead: 6mm hex\nMaterial: PLA/PETG compatible',
+                    size: 'M4',
+                    stlFile: 'files/stl/bolt-m4-12.stl',
+                    stepFile: 'files/step/bolt-m4-12.step'
+                }
+            ],
+            nuts: [
+                {
+                    id: 'nut-m3',
+                    title: 'M3 Hex Nut',
+                    specs: 'Thread: M3 × 0.5mm\nWidth: 5.5mm\nHeight: 2.4mm\nMaterial: PLA/PETG compatible',
+                    size: 'M3',
+                    stlFile: 'files/stl/nut-m3.stl',
+                    stepFile: 'files/step/nut-m3.step'
+                }
+            ],
+            washers: [
+                {
+                    id: 'washer-m3',
+                    title: 'M3 Flat Washer',
+                    specs: 'Inner Diameter: 3.2mm\nOuter Diameter: 7mm\nThickness: 0.5mm\nMaterial: PLA/PETG compatible',
+                    size: 'M3',
+                    stlFile: 'files/stl/washer-m3.stl',
+                    stepFile: 'files/step/washer-m3.step'
+                }
+            ],
+            'cable-organizers': [
+                {
+                    id: 'cable-clip-5mm',
+                    title: '5mm Cable Clip',
+                    specs: 'Cable Diameter: 5mm\nMounting: Screw or adhesive\nMaterial: PLA/PETG compatible',
+                    size: '5mm',
+                    stlFile: 'files/stl/cable-clip-5mm.stl',
+                    stepFile: 'files/step/cable-clip-5mm.step'
+                }
+            ]
+        };
+
+        let currentCategory = '';
+
+        function showHome() {
+            document.getElementById('homeView').classList.remove('hidden');
+            document.getElementById('categoryView').classList.add('hidden');
+            document.getElementById('breadcrumb').innerHTML = '<a href="#" onclick="showHome()">Home</a>';
+            currentCategory = '';
+        }
+
+        function showCategory(category) {
+            currentCategory = category;
+            document.getElementById('homeView').classList.add('hidden');
+            document.getElementById('categoryView').classList.remove('hidden');
+            
+            const categoryName = category.charAt(0).toUpperCase() + category.slice(1).replace('-', ' ');
+            document.getElementById('breadcrumb').innerHTML = 
+                `<a href="#" onclick="showHome()">Home</a> > ${categoryName}`;
+            
+            renderParts(partsData[category] || []);
+        }
+
+        function renderParts(parts) {
+            const grid = document.getElementById('partsGrid');
+            grid.innerHTML = parts.map(part => `
+                <div class="part-card">
+                    <div class="part-image">
+                        Preview Image
+                    </div>
+                    <div class="part-info">
+                        <div class="part-title">${part.title}</div>
+                        <div class="part-specs">${part.specs.replace(/\n/g, '<br>')}</div>
+                    </div>
+                    <div class="download-buttons">
+                        <a href="${part.stlFile}" class="download-btn btn-stl" download>
+                            STL (Free)
+                        </a>
+                        <a href="${part.stepFile}" class="download-btn btn-step btn-step premium">
+                            STEP (Premium)
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', filterParts);
+        document.getElementById('categoryFilter').addEventListener('change', filterParts);
+        document.getElementById('sizeFilter').addEventListener('change', filterParts);
+
+        function filterParts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const sizeFilter = document.getElementById('sizeFilter').value;
+
+            if (categoryFilter && currentCategory !== categoryFilter) {
+                showCategory(categoryFilter);
+                return;
+            }
+
+            if (!currentCategory) return;
+
+            const parts = partsData[currentCategory] || [];
+            const filteredParts = parts.filter(part => {
+                const matchesSearch = part.title.toLowerCase().includes(searchTerm) ||
+                                    part.specs.toLowerCase().includes(searchTerm);
+                const matchesSize = !sizeFilter || part.size === sizeFilter;
+                return matchesSearch && matchesSize;
+            });
+
+            renderParts(filteredParts);
+        }
+    </script>
+</body>
+</html>
